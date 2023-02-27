@@ -47,7 +47,7 @@ const NotifyCustomer = () => {
     const [location, setC] = useState("");
     const [bikes, setM] = useState("");
     const [distance, setE] = useState("");
-    // const [imei, setIMEI] = useState("");
+    const [imei, setIMEI] = useState("");
 
     const postHandler = async (e) => {
       e.preventDefault();
@@ -58,7 +58,7 @@ const NotifyCustomer = () => {
             location,
             bikes,
             distance,
-            // imei,
+            imei,
           }
         );
         console.log(data);
@@ -127,13 +127,13 @@ const NotifyCustomer = () => {
                   onChange={(e) => setE(e.target.value)}
                 />
               </Form.Group>
-              {/* <Form.Group className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>IMEI Number </Form.Label>
                 <Form.Control
                   type="number"
                   onChange={(e) => setIMEI(e.target.value)}
                 />
-              </Form.Group> */}
+              </Form.Group>
               <Button variant="outline-dark" type="submit">
                 Submit
               </Button>
@@ -193,7 +193,7 @@ const NotifyCustomer = () => {
                 <th>Bikes</th>
                 <th>Location </th>
                 <th>Distance </th>
-                {/* <th>IMEI Number </th> */}
+                <th>IMEI Number </th>
                 <th>Action</th>
               </tr>
             </thead>

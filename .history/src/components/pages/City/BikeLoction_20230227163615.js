@@ -8,7 +8,7 @@ import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 
 const BikeLoction = () => {
-  const { id, imei } = useParams();
+  const { id, imie } = useParams();
   const [position, setPosition] = useState({
     lat: 48.8584,
     lng: 2.2945,
@@ -17,20 +17,19 @@ const BikeLoction = () => {
   const putData = useCallback(async () => {
     try {
       const { data } = await axios.post(
-        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/cycle/updatelocation/${id}`,
-        { imei }
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/cycle/updatelocation/63fc893a429aabd4e21bb8f9/${id}`,
+        { imie }
       );
       console.log(data);
     } catch (err) {
       console.log(err);
     }
-  }, [id, imei]);
-
+  }, [id, imie]);
 
   const fetchData = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/cycle/get/${id}`
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/location/get/${id}`
       );
       console.log(data);
       setPosition({

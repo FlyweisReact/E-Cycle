@@ -45,7 +45,6 @@ const Labour = () => {
           {
             location,
             cycleNumber,
-            imei
           }
         );
         console.log(data);
@@ -111,7 +110,7 @@ const Labour = () => {
                 <Form.Label> IMEI Number </Form.Label>
                 <Form.Control
                   type="text"
-                  onChange={(e) => setIMEI(e.target.value)}
+                  onChange={(e) => setIm(e.target.value)}
                 />
               </Form.Group>
 

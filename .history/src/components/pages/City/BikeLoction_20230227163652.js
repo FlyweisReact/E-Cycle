@@ -17,7 +17,7 @@ const BikeLoction = () => {
   const putData = useCallback(async () => {
     try {
       const { data } = await axios.post(
-        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/cycle/updatelocation/${id}`,
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/cycle/updatelocation/${id}`,
         { imei }
       );
       console.log(data);
@@ -26,11 +26,10 @@ const BikeLoction = () => {
     }
   }, [id, imei]);
 
-
   const fetchData = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/cycle/get/${id}`
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/location/get/${id}`
       );
       console.log(data);
       setPosition({

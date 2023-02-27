@@ -47,7 +47,7 @@ const NotifyCustomer = () => {
     const [location, setC] = useState("");
     const [bikes, setM] = useState("");
     const [distance, setE] = useState("");
-    // const [imei, setIMEI] = useState("");
+    const [imei, setIMEI] = useState("");
 
     const postHandler = async (e) => {
       e.preventDefault();

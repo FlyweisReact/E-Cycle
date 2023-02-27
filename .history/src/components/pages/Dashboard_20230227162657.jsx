@@ -23,7 +23,7 @@ const Dashboard = () => {
   const fetchLocation = async () => {
     try {
       const { data } = await axios.get(
-        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/cycle/all"
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/location"
       );
       setData(data);
     } catch (err) {

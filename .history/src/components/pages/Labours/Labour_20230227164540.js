@@ -34,7 +34,6 @@ const Labour = () => {
   function MyVerticallyCenteredModal(props) {
     const [location, setLoction] = useState("");
     const [cycleNumber, setCycleNumber] = useState("");
-    const [ imei , setIMEI ] = useState("")
 
 
     const postHandler = async (e) => {
@@ -45,7 +44,6 @@ const Labour = () => {
           {
             location,
             cycleNumber,
-            imei
           }
         );
         console.log(data);
@@ -111,7 +109,7 @@ const Labour = () => {
                 <Form.Label> IMEI Number </Form.Label>
                 <Form.Control
                   type="text"
-                  onChange={(e) => setIMEI(e.target.value)}
+                  onChange={(e) => setLoction(e.target.value)}
                 />
               </Form.Group>
 

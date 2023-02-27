@@ -45,7 +45,6 @@ const Labour = () => {
           {
             location,
             cycleNumber,
-            imei
           }
         );
         console.log(data);

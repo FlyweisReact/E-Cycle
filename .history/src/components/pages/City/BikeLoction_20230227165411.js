@@ -30,7 +30,7 @@ const BikeLoction = () => {
   const fetchData = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/cycle/get/${id}`
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/cycle/get/63fc92b5d7b237285dc99dbd`
       );
       console.log(data);
       setPosition({
