@@ -7,45 +7,46 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 
-const Graph = () => {
-  const { id } = useParams();
-
-  const [data, setData] = useState([]);
-
+const BikeLoction = () => {
+  const { id, imie } = useParams();
   const [position, setPosition] = useState({
     lat: 48.8584,
     lng: 2.2945,
   });
 
-  const fetchUs = useCallback(async () => {
+  const putData = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/admin/user/location/63f07487bd1cc1fda388e376"
+      const { data } = await axios.post(
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/location/update/${id}`,
+        { imie }
       );
       console.log(data);
     } catch (err) {
       console.log(err);
     }
-  }, []);
+  }, [id, imie]);
 
-  useEffect(() => {
-    console.log("Rendersd");
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/admin/user/location/${id}`
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/location/get/${id}`
       );
-      setPosition({
-        lat: parseInt(data?.message?.data?.latitude),
-        lng: parseInt(data?.message?.data?.longitude),
-      });
       console.log(data);
-    } catch (Err) {
-      console.log(Err);
+      setPosition({
+        lat: parseFloat(data?.message?.lat),
+        lng: parseFloat(data?.message?.long),
+      });
+    } catch (err) {
+      console.log(err);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    putData();
+    setTimeout(() => {
+      fetchData();
+    }, [2000]);
+  }, [putData, fetchData]);
 
   const containerStyle = {
     width: "100%",
@@ -85,4 +86,4 @@ const Graph = () => {
   );
 };
 
-export default HOC(Graph);
+export default HOC(BikeLoction);

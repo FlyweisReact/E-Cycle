@@ -1,15 +1,52 @@
 /** @format */
-import React from "react";
-import { Button, Container, Table, Modal, Form } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Table, Modal, Form } from "react-bootstrap";
 import HOC from "../../layout/HOC";
-import { AiFillEdit } from "react-icons/ai";
 import { toast } from "react-toastify";
-import img from "../../SVG/list.svg";
+import axios from "axios";
 
 const Help = () => {
   const [modalShow, setModalShow] = React.useState(false);
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/help"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   function MyVerticallyCenteredModal(props) {
+    const [ques, setQuestion] = useState("");
+    const [ans, setAnswer] = useState("");
+
+    const postHandler = async (e) => {
+      e.preventDefault();
+      try {
+        const { data } = await axios.post(
+          "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/help",
+          {
+            ques,
+            ans,
+          }
+        );
+        console.log(data);
+        toast.success("Added");
+        fetchData();
+        setModalShow(false);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     return (
       <Modal
         {...props}
@@ -19,7 +56,7 @@ const Help = () => {
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            Edit Help&Support
+            Add Help&Support
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -28,18 +65,25 @@ const Help = () => {
               color: "black",
               margin: "auto",
             }}
+            onSubmit={postHandler}
           >
             <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control type="email" />
+              <Form.Label>Question</Form.Label>
+              <Form.Control
+                type="text"
+                onChange={(e) => setQuestion(e.target.value)}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Phone Number</Form.Label>
-              <Form.Control type="Number" />
+              <Form.Label>Answer</Form.Label>
+              <Form.Control
+                type="text"
+                onChange={(e) => setAnswer(e.target.value)}
+              />
             </Form.Group>
 
-            <Button variant="outline-success" onClick={() => toast.success('Help&Support Edited')}>
+            <Button variant="outline-success" type="submit">
               Submit
             </Button>
           </Form>
@@ -48,37 +92,26 @@ const Help = () => {
     );
   }
 
+  const deleteHandler = async (id) => {
+    try {
+      const data = await axios.delete(
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/help/${id}`
+      );
+      console.log(data);
+      toast.success("Deleted");
+      fetchData();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
-  <div style={{ display: "flex", gap: "20px", marginBottom: "2%" }}>
-        <img
-          src={img}
-          alt=""
-          style={{
-            backgroundColor: "#4099ff",
-            padding: "8px",
-            borderRadius: "5px",
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-            width: "40px",
-            height: "40px",
-            marginTop: "5px",
-          }}
-        />
-        <p
-          style={{
-            color: "black",
-            fontSize: "18px",
-            margin: "0",
-            marginTop: "10px",
-          }}
-        >
-          Help&Support
-        </p>
-      </div>
+
       <section
         style={{
           boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
@@ -88,45 +121,40 @@ const Help = () => {
         }}
       >
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
-        <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
+          <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
             Help&Support
             <hr style={{ width: "70%" }} />
           </span>
+          <Button onClick={() => setModalShow(true)}>Add New</Button>
         </div>
- 
 
-      <div>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Help&Support</th>
+        <div>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Answer</th>
+                <th> Action </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.message?.map((i, index) => (
+                <tr>
+                  <td>{i.ques}</td>
+                  <td>{i.ans}</td>
 
-              <th> Action </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                The live support representative will give you rapid help and get
-                your Google products-related queries resolved. By Phone Number:
-                You can also call at Google customer support number
-                1-866-2-Google (1-866-246-6453) or 1-888-570-1575 and directly
-                connect the customer service team at Google.
-              </td>
-
-              <td style={{ display: "flex", gap: "10px" }}>
-                <AiFillEdit
-                  color="blue"
-                  cursor={"pointer"}
-                  onClick={() => {
-                    setModalShow(true);
-                  }}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </Table>
-      </div>
+                  <td style={{ display: "flex", gap: "10px" }}>
+                    <i
+                      class="fa-solid fa-trash"
+                      style={{ color: "red", cursor: "pointer" }}
+                      onClick={() => deleteHandler(i._id)}
+                    ></i>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       </section>
     </>
   );

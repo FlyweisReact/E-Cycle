@@ -1,193 +1,143 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HOC from "../layout/HOC";
-import {  MdPayment, MdPrivacyTip } from "react-icons/md";
-import {
-  FaUserFriends,
-  FaCity,
-  FaUserTie,
-  FaUser,
-  FaFileInvoice,
-} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { BsFillPieChartFill } from "react-icons/bs";
-import { BiHelpCircle, BiSupport, BiLogOutCircle } from "react-icons/bi";
-import { AiFillNotification } from "react-icons/ai";
-import { RiCoupon3Line } from "react-icons/ri";
-import { ImPriceTag, ImImage } from "react-icons/im";
-
-// SVG
 import img from "../SVG/home.svg";
-import img2 from "../SVG/user.svg";
-import img3 from "../SVG/users.svg";
-import img4 from "../SVG/tag.svg";
+import axios from "axios";
+import { GoogleMap, MarkerF, useJsApiLoader } from "@react-google-maps/api";
+import Spinner from "react-bootstrap/Spinner";
 
 export const dash = (data) => {
   return data;
 };
+
 const Dashboard = () => {
+  const [userCount, setUserCount] = useState("");
+  const [zoneCount, setZoneCount] = useState("");
+  const [rideCount, setRideCount] = useState("");
+  const [totalCycle, setTotalCycle] = useState([]);
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
+
+  const fetchLocation = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/location"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const TotalUsers = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/admin/totaluser"
+      );
+      setUserCount(data?.Users);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const TotalZones = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/admin/totalzones"
+      );
+      setZoneCount(data?.message);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const TotalRide = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/admin/totalride"
+      );
+      setRideCount(data?.message);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const TotalCycle = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/cycle/all"
+      );
+      setTotalCycle(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    TotalUsers();
+    TotalZones();
+    TotalRide();
+    TotalCycle();
+    fetchLocation();
+  }, []);
+
+  const cycleCount = totalCycle?.message?.length;
+
   const card = [
     {
-      progress: "bg-green-400",
-      title: "Total Users",
-      number: "100",
+      title: "Total User's",
+      number: userCount,
+      icon: <i className="fa-solid fa-user text-2xl text-[#4099ff]"></i>,
       link: "/customer",
-      img: `${img2}`,
-      bg: "#ff5370",
-    },
-    {
-      progress: "bg-yellow-400",
-      title: "Total Heros",
-      number: "150",
-      img: `${img3}`,
-      link: "/generateId",
       bg: "#4099ff",
     },
     {
-      progress: "bg-yellow-400",
-      title: "Ongoing tast",
-      number: "150",
-      img: `${img4}`,
-      link: "/Notice/Labour",
-      bg: "#2ed8b6",
-    },
-    {
-      progress: "bg-yellow-400",
-      title: "City",
-      number: "150",
-      icon: <FaCity className="text-2xl text-[#ffb64d]" />,
-      link: "/city",
-      bg: "#ffb64d",
-    },
-  ];
-
-  const smallCards = [
-    {
-      progress: "bg-green-400",
-      title: " Users",
-      number: "100",
-      icon: <FaUserFriends className="text-2xl text-[#19ac5e]" />,
+      title: "Total Zone's",
+      number: zoneCount,
+      icon: <i className="fa-solid fa-user text-2xl text-[#4099ff]"></i>,
       link: "/customer",
-      color: "rgb(64,153,255)",
+      bg: "#4099ff",
     },
     {
-      progress: "bg-yellow-400",
-      title: "City",
-      number: "150",
-      icon: <FaCity className="text-2xl text-[rgb(170,93,225)]" />,
-      link: "/city",
-      color: "rgb(170,93,225)",
+      title: "Total Ride's",
+      number: rideCount,
+      icon: <i className="fa-solid fa-user text-2xl text-[#4099ff]"></i>,
+      link: "/customer",
+      bg: "#4099ff",
     },
     {
-      progress: "bg-yellow-400",
-      title: "Analatical Graph",
-      number: "150",
-      icon: <BsFillPieChartFill className="text-2xl text-[rgb(67,136,232)]" />,
-      link: "/graph",
-      color: "rgb(239,76,77)",
-    },
-    {
-      progress: "bg-green-400",
-      title: "Notification",
-      number: "100",
-      icon: <AiFillNotification className="text-2xl text-[rgb(244,169,52)]" />,
-      link: "/notification",
-      color: "#36b672",
-    },
-    {
-      progress: "bg-yellow-400",
-      title: " Hero's",
-      number: "150",
-      icon: <FaUserTie className="text-2xl text-[rgb(237,77,77)]" />,
-      link: "/generateId",
-      color: "#36b672",
-    },
-    {
-      progress: "bg-yellow-400",
-      title: "Common Users",
-      number: "150",
-      icon: <FaUser className="text-2xl text-[rgb(241,147,48)]" />,
-      link: "/common",
-      color: "rgb(170,93,225)",
-    },
-    {
-      progress: "bg-green-400",
-      title: "Booking",
-      number: "100",
-      icon: <MdPayment className="text-2xl text-[#19ac5e]" />,
-      link: "/Notice/Labour",
-      color: "rgb(239,76,77)",
-    },
-    {
-      progress: "bg-yellow-400",
-      title: "Coupons",
-      number: "150",
-      icon: <RiCoupon3Line className="text-2xl text-[rgb(170,93,225)]" />,
-      link: "/Notice/Customer",
-      color: "rgb(170,93,225)",
-    },
-    {
-      progress: "bg-yellow-400",
-      title: "Pricing Section",
-      number: "150",
-      icon: <ImPriceTag className="text-2xl text-[rgb(67,136,232)]" />,
-      link: "/pay",
-      color: "#36b672",
-    },
-    {
-      progress: "bg-green-400",
-      title: "Transiction",
-      number: "100",
-      icon: <FaFileInvoice className="text-2xl text-[rgb(244,169,52)]" />,
-      link: "/trans",
-      color: "#ff5370",
-    },
-    {
-      progress: "bg-yellow-400",
-      title: "Banners",
-      number: "150",
-      icon: <ImImage className="text-2xl text-[rgb(237,77,77)]" />,
-      link: "/cat",
-      color: "rgb(239,76,77)",
-    },
-    {
-      progress: "bg-yellow-400",
-      title: "Terms&Condition",
-      number: "150",
-      icon: <BiHelpCircle className="text-2xl text-[rgb(241,147,48)]" />,
-      link: "/terms",
-      color: "rgb(170,93,225)",
-    },
-
-    {
-      progress: "bg-green-400",
-      title: "Privacy Policy",
-      number: "100",
-      icon: <MdPrivacyTip className="text-2xl text-[#19ac5e]" />,
-      link: "/privacy",
-      color: "#ff5370",
-    },
-    {
-      progress: "bg-yellow-400",
-      title: "Help&Support",
-      number: "150",
-      icon: <BiSupport className="text-2xl text-[rgb(170,93,225)]" />,
-      link: "/help",
-      color: "rgb(170,93,225)",
-    },
-
-    {
-      progress: "bg-yellow-400",
-      title: "Logout",
-      number: "150",
-      icon: <BiLogOutCircle className="text-2xl text-[rgb(170,93,225)]" />,
-      link: "/",
-      color: "#ff5370",
+      title: "Total E-Cycle's",
+      number: cycleCount,
+      icon: <i className="fa-solid fa-user text-2xl text-[#4099ff]"></i>,
+      link: "/customer",
+      bg: "#4099ff",
     },
   ];
 
-  const navigate = useNavigate();
+  const containerStyle = {
+    width: "100%",
+    height: "800px",
+  };
+
+  const center = {
+    lat: 23.0707,
+    lng: 80.0982,
+  };
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyDntn5A6bf1VLX2WgNUetcG84HjRrCmE7w",
+  });
+
+  if (!isLoaded) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
+  }
+
   return (
     <>
       <div style={{ display: "flex", gap: "20px", marginBottom: "2%" }}>
@@ -212,7 +162,7 @@ const Dashboard = () => {
             <div
               className="px-5 py-8 bg-slate-200 space-y-2 shadow-xl flex flex-col  rounded-md"
               key={index}
-              onClick={() => navigate(`${card.link}`)}
+              onClick={() => navigate(`${card.link ? card.link : "#"}`)}
               style={{ cursor: "pointer", backgroundColor: `${card.bg}` }}
             >
               <div className="grid  justify-between grid-cols-4">
@@ -230,11 +180,7 @@ const Dashboard = () => {
                     {card.number}
                   </span>
                 </div>
-                <div
-                  className="flex rounded-full w-10 h-10 sm:w-12 sm:h-12 bg-white justify-center items-center myICons"
-          
-                  
-                >
+                <div className="flex rounded-full w-10 h-10 sm:w-12 sm:h-12 bg-white justify-center items-center myICons">
                   {card.img ? <img src={card.img} alt="" /> : card.icon}
                 </div>
               </div>
@@ -243,34 +189,26 @@ const Dashboard = () => {
         })}
       </section>
 
-      <section
-        className="grid md:grid-cols-5 grid-cols-2 gap-y-6 gap-x-4"
-        style={{ marginTop: "20%" }}
-      >
-        {smallCards.map((card, index) => {
-          return (
-            <div
-              className="px-3 py-2 space-y-2 shadow-xl flex flex-col  rounded-md"
+      <div style={{ marginTop: "5%" }}>
+        <GoogleMap
+          center={center}
+          zoom={15}
+          mapContainerStyle={containerStyle}
+          options={{
+            zoomControl: false,
+            streetViewControl: false,
+            mapTypeControl: false,
+            fullscreenControl: false,
+          }}
+        >
+          {data?.message?.map((i, index) => (
+            <MarkerF
+              position={{ lat: parseFloat(i.lat), lng: parseFloat(i.long) }}
               key={index}
-              onClick={() => navigate(`${card.link}`)}
-              style={{ cursor: "pointer" }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div>{card.icon}</div>
-                <div style={{ color: `${card.color}`, textAlign: "right" }}>
-                  <span>{card.number}</span>
-                  <p>{card.title} </p>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </section>
+            />
+          ))}
+        </GoogleMap>
+      </div>
     </>
   );
 };

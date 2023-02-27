@@ -1,45 +1,32 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
 import Table from "react-bootstrap/Table";
 import img from "../../SVG/list.svg";
+import axios from "axios";
 
-
-const users = [
-  {
-    customer: "Abhisekh",
-    Hero: "Arpan",
-    service: "Photo",
-    location: "delhi",
-    date: "12/02/2005",
-    amount: "5,000",
-    mode: "online",
-  },
-  {
-    customer: "Sharukh",
-    Hero: "Gauri",
-    service: "Video",
-    location: "delhi",
-    date: "12/02/2005",
-    amount: "45,000",
-    mode: "Cash",
-  },
-  {
-    customer: "Krishna",
-    Hero: "Raftaar",
-    service: "Video",
-    location: "delhi",
-    date: "12/02/2005",
-    amount: "95,000",
-    mode: "online",
-  },
-];
 const Transaction = () => {
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/payment/all"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <>
-
-<div style={{ display: "flex", gap: "20px", marginBottom: "2%" }}>
+      <div style={{ display: "flex", gap: "20px", marginBottom: "2%" }}>
         <img
           src={img}
           alt=""
@@ -54,12 +41,12 @@ const Transaction = () => {
           }}
         />
         <p style={{ color: "black", fontSize: "18px", margin: "0" }}>
-          Transactional  List <br />
+          Transactional List <br />
           <span style={{ fontSize: "14px" }}>All Transactional List</span>
         </p>
       </div>
       <section
-         style={{
+        style={{
           boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
           padding: "20px",
           width: "98%",
@@ -67,44 +54,47 @@ const Transaction = () => {
         }}
       >
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
-        <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
+          <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
             All Transactions
             <hr style={{ width: "70%" }} />
           </span>
         </div>
-   
 
-      <Table
-        striped
-        bordered
-        hover
-        style={{
-          marginTop: "2%",
-          scrollBehavior: "smooth",
-          overflow: "scroll",
-        }}
-      >
-        <thead>
-          <tr>
-            <th> Customer </th>
-            <th> Hero </th>
-            <th> Date </th>
-            <th>Amount </th>
-            <th>Payment Method </th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((i, index) => (
-            <tr key={index}>
-              <td> {i.customer} </td>
-              <td> {i.Hero} </td>
-              <td> {i.date} </td>
-              <td> {i.amount} </td>
-              <td> {i.mode} </td>
+        <Table
+          striped
+          bordered
+          hover
+          style={{
+            marginTop: "2%",
+            scrollBehavior: "smooth",
+            overflow: "scroll",
+          }}
+        >
+          <thead>
+            <tr>
+              <th> Customer Name </th>
+              <th> Customer Email </th>
+              <th> Customer IMIE </th>
+              <th> Customer Mobile Number </th>
+              <th>Amount </th>
+              <th>Invoice </th>
+              <th>Status </th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {data?.details?.map((i, index) => (
+              <tr key={index}>
+                <td> {i.user?.name} </td>
+                <td> {i.user?.email} </td>
+                <td> {i.user?.IMEI} </td>
+                <td> {i.user?.mobile} </td>
+                <td> {i.amount} </td>
+                <td> {i.invoice} </td>
+                <td> {i.status === false ? "False" : "True"} </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </section>
     </>
   );

@@ -1,22 +1,52 @@
 /** @format */
 
-import React from "react";
-import {
-  Button,
-  Table,
-  Modal,
-  Form,
-  FloatingLabel,
-} from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Table, Modal, Form, FloatingLabel } from "react-bootstrap";
 import HOC from "../../layout/HOC";
 import { AiFillEdit } from "react-icons/ai";
 import { toast } from "react-toastify";
-import img from "../../SVG/list.svg";
+import axios from "axios";
 
 const Privacy = () => {
   const [modalShow, setModalShow] = React.useState(false);
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/privacy"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   function MyVerticallyCenteredModal(props) {
+    const [privacy, setP] = useState("");
+
+    const putHandler = async (e) => {
+      e.preventDefault();
+      try {
+        const data = await axios.put(
+          "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/privacy/63c15a469e7590426808025c",
+          {
+            privacy,
+          }
+        );
+        console.log(data);
+        toast.success("Edited");
+        setModalShow(false);
+        fetchData();
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     return (
       <Modal
         {...props}
@@ -35,19 +65,20 @@ const Privacy = () => {
               color: "black",
               margin: "auto",
             }}
+            onSubmit={putHandler}
           >
             <FloatingLabel
               controlId="floatingTextarea"
               label="Privacy policy"
               className="mb-3"
             >
-              <Form.Control as="textarea" />
+              <Form.Control
+                as="textarea"
+                onChange={(e) => setP(e.target.value)}
+              />
             </FloatingLabel>
 
-            <Button
-              variant="outline-success"
-              onClick={() => toast.success("Privacy Policy Edited")}
-            >
+            <Button variant="outline-success" type="submit">
               Submit
             </Button>
           </Form>
@@ -62,31 +93,7 @@ const Privacy = () => {
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
-    <div style={{ display: "flex", gap: "20px", marginBottom: "2%" }}>
-        <img
-          src={img}
-          alt=""
-          style={{
-            backgroundColor: "#4099ff",
-            padding: "8px",
-            borderRadius: "5px",
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-            width: "40px",
-            height: "40px",
-            marginTop: "5px",
-          }}
-        />
-        <p
-          style={{
-            color: "black",
-            fontSize: "18px",
-            margin: "0",
-            marginTop: "10px",
-          }}
-        >
-          Privacy Policy
-        </p>
-      </div>
+
       <section
         style={{
           boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
@@ -96,41 +103,36 @@ const Privacy = () => {
         }}
       >
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
-        <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
+          <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
             Privacy Policy
             <hr style={{ width: "70%" }} />
           </span>
         </div>
 
-
-      <div >
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Privacy Policy</th>
-              <th> Action </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                A privacy policy is a statement or legal document (in privacy
-                law) that discloses some or all of the ways a party gathers,
-                uses, discloses, and manages a customer or client's data.
-              </td>
-              <td style={{ display: "flex", gap: "10px" }}>
-                <AiFillEdit
-                  color="blue"
-                  cursor={"pointer"}
-                  onClick={() => {
-                    setModalShow(true);
-                  }}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </Table>
-      </div>
+        <div>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Privacy Policy</th>
+                <th> Action </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{data?.privacy?.privacy}</td>
+                <td style={{ display: "flex", gap: "10px" }}>
+                  <AiFillEdit
+                    color="blue"
+                    cursor={"pointer"}
+                    onClick={() => {
+                      setModalShow(true);
+                    }}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        </div>
       </section>
     </>
   );

@@ -1,42 +1,113 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
 import img from "../../SVG/list.svg";
-
-const users = [
-  {
-    customer: "Abhisekh",
-    Hero: "Arpan",
-    service: "Photo",
-    location: "delhi",
-    date: "12/02/2005",
-    amount: "5,000",
-    mode: "online",
-  },
-  {
-    customer: "Sharukh",
-    Hero: "Gauri",
-    service: "Video",
-    location: "delhi",
-    date: "12/02/2005",
-    amount: "45,000",
-    mode: "Cash",
-  },
-  {
-    customer: "Krishna",
-    Hero: "Raftaar",
-    service: "Video",
-    location: "delhi",
-    date: "12/02/2005",
-    amount: "95,000",
-    mode: "online",
-  },
-];
+import { Form, Modal, Container, Button } from "react-bootstrap";
+import Table from "react-bootstrap/Table";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const NotifyLabour = () => {
+  const [modalShow, setModalShow] = React.useState(false);
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/planes/all"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  function MyVerticallyCenteredModal(props) {
+    const [time, setTime] = useState("");
+    const [plane, setPlan] = useState("");
+
+    const postHandler = async (e) => {
+      e.preventDefault();
+      try {
+        const data = await axios.post(
+          "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/planes",
+          { time, plane }
+        );
+        console.log(data);
+        fetchData();
+        toast.success("New Plan Added");
+        props.onHide();
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Add New Membership Plan
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Form onSubmit={postHandler}>
+              <Form.Group className="mb-3">
+                <Form.Label>Time</Form.Label>
+                <Form.Control
+                  type="text"
+                  onChange={(e) => setTime(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Plan</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="999"
+                  onChange={(e) => setPlan(e.target.value)}
+                />
+              </Form.Group>
+              <Button variant="outline-success" type="submit">
+                Submit
+              </Button>
+            </Form>
+          </Container>
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+    );
+  }
+
+  const deleteHandler = async (id) => {
+    try {
+      const data = await axios.delete(
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/planes/delete/${id}`
+      );
+      console.log(data);
+      toast.success("Plan Deleted Successfully");
+      fetchData();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
+      {" "}
+      <MyVerticallyCenteredModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />
       <div style={{ display: "flex", gap: "20px", marginBottom: "2%" }}>
         <img
           src={img}
@@ -52,77 +123,65 @@ const NotifyLabour = () => {
           }}
         />
         <p style={{ color: "black", fontSize: "18px", margin: "0" }}>
-          Booking List <br />
-          <span style={{ fontSize: "14px" }}>All Booking's List</span>
+          Project's List <br />
+          <span style={{ fontSize: "14px" }}>All Project's List</span>
         </p>
       </div>
-
       <section
         style={{
           boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
           padding: "20px",
-          width: "84%",
+          width: "98%",
           marginLeft: "10px",
         }}
       >
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
           <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
-            All Booking's
+            All Project's
             <hr style={{ width: "70%" }} />
           </span>
+          <Button
+            variant="outline-success"
+            onClick={() => {
+              setModalShow(true);
+            }}
+          >
+            Add
+          </Button>
         </div>
 
         <div
           style={{
-            overflowX: "auto",
-            padding: "10px",
-            width : '95%'
-            ,
-             marginLeft : '2.5%'
+            overflow: "auto",
+            width: "100%",
           }}
         >
-          <table style={{ marginTop: "2%" }}>
+          <Table striped bordered hover>
             <thead>
               <tr>
-                <th> Customer </th>
-                <th> Hero </th>
-                <th> Service </th>
-                <th> Location </th>
-                <th> Date </th>
-                <th> Category </th>
                 <th> Time </th>
-                <th> Status </th>
-                <th> Scheduled </th>
-                <th> Ratings </th>
-                <th> Wallet </th>
-                <th> Clixo Reward </th>
-                <th> Clixo Points </th>
-                <th>Amount </th>
-                <th>Payment Method </th>
+                <th> Plan </th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((i, index) => (
+              {data?.message?.map((i, index) => (
                 <tr key={index}>
-                  <td> {i.customer} </td>
-                  <td> {i.Hero} </td>
-                  <td> {i.service} </td>
-                  <td> {i.location} </td>
-                  <td> {i.date} </td>
-                  <td> Category </td>
-                  <td> 2:45 PM </td>
-                  <td> Successfull </td>
-                  <td> Complete </td>
-                  <td> 5 </td>
-                  <td> 5200 </td>
-                  <td> Rewards </td>
-                  <td> 100 points </td>
-                  <td> {i.amount} </td>
-                  <td> {i.mode} </td>
+                  <td> {i.time} </td>
+                  <td> ₹{i.plane} </td>
+                  <td>
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <i
+                        class="fa-solid fa-trash"
+                        style={{ color: "red", cursor: "pointer" }}
+                        onClick={() => deleteHandler(i._id)}
+                      ></i>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
         </div>
       </section>
     </>

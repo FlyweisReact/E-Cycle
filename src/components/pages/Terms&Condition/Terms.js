@@ -1,23 +1,53 @@
 /** @format */
 
-import React from "react";
-import {
-  Button,
-  
-  Table,
-  Modal,
-  Form,
-  FloatingLabel,
-} from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Table, Modal, Form, FloatingLabel } from "react-bootstrap";
 import HOC from "../../layout/HOC";
 import { AiFillEdit } from "react-icons/ai";
 import { toast } from "react-toastify";
-import img from "../../SVG/list.svg";
+import axios from "axios";
 
 const Terms = () => {
   const [modalShow, setModalShow] = React.useState(false);
 
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/terms"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   function MyVerticallyCenteredModal(props) {
+    const [terms, setTerms] = useState("");
+
+    const putHandler = async (e) => {
+      e.preventDefault();
+      try {
+        const data = await axios.put(
+          `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/terms/63c159790b2529d367266420`,
+          {
+            terms,
+          }
+        );
+        console.log(data);
+        toast.success("Edited");
+        setModalShow(false);
+        fetchData();
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     return (
       <Modal
         {...props}
@@ -36,19 +66,20 @@ const Terms = () => {
               color: "black",
               margin: "auto",
             }}
+            onSubmit={putHandler}
           >
             <FloatingLabel
               controlId="floatingTextarea"
               label="Terms&Condition"
               className="mb-3"
             >
-              <Form.Control as="textarea" />
+              <Form.Control
+                as="textarea"
+                onChange={(e) => setTerms(e.target.value)}
+              />
             </FloatingLabel>
 
-            <Button
-              variant="outline-success"
-              onClick={() => toast.success("Terms&Condition Edited ")}
-            >
+            <Button variant="outline-success" type="submit">
               Submit
             </Button>
           </Form>
@@ -63,31 +94,7 @@ const Terms = () => {
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
-      <div style={{ display: "flex", gap: "20px", marginBottom: "2%" }}>
-        <img
-          src={img}
-          alt=""
-          style={{
-            backgroundColor: "#4099ff",
-            padding: "8px",
-            borderRadius: "5px",
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-            width: "40px",
-            height: "40px",
-            marginTop: "5px",
-          }}
-        />
-        <p
-          style={{
-            color: "black",
-            fontSize: "18px",
-            margin: "0",
-            marginTop: "10px",
-          }}
-        >
-          Terms&Condition
-        </p>
-      </div>
+
       <section
         style={{
           boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
@@ -113,12 +120,7 @@ const Terms = () => {
             </thead>
             <tbody>
               <tr>
-                <td>
-                  service provider and a person who wants to use that service.
-                  The person must agree to abide by the terms of service in
-                  order to use the offered service. Terms of service can also be
-                  merely a disclaimer, especially regarding the use of websites
-                </td>
+                <td>{data?.terms?.terms}</td>
                 <td style={{ display: "flex", gap: "10px" }}>
                   <AiFillEdit
                     color="blue"

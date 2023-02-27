@@ -1,33 +1,31 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HOC from "../layout/HOC";
 import { Table } from "react-bootstrap";
-import img from '../SVG/list.svg'
+import img from "../SVG/list.svg";
+import axios from "axios";
 
 const CommonUser = () => {
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/payment/deposits/all"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <>
-      <div style={{ display: "flex", gap: "20px", marginBottom: "2%" }}>
-        <img
-          src={img}
-          alt=""
-          style={{
-            backgroundColor: "#4099ff",
-            padding: "8px",
-            borderRadius: "5px",
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-            width: "40px",
-            height: "40px",
-            marginTop: "5px",
-          }}
-        />
-        <p style={{ color: "black", fontSize: "18px", margin: "0" }}>
-          Common User's List <br />
-          <span style={{ fontSize: "14px" }}>All Common User's List</span>
-        </p>
-      </div>
-
       <section
         style={{
           boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
@@ -37,68 +35,45 @@ const CommonUser = () => {
         }}
       >
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
-        <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
-            All Common User's
+          <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
+            All Security Deposit
             <hr style={{ width: "70%" }} />
           </span>
         </div>
-   
 
-      <div
-        style={{    
-          marginTop: "2%",
-        }}
-      >
-        <Table striped bordered hover>
+        <Table
+          striped
+          bordered
+          hover
+          style={{
+            marginTop: "2%",
+            scrollBehavior: "smooth",
+            overflow: "scroll",
+          }}
+        >
           <thead>
             <tr>
-              <th> Name</th>
-              <th>Email</th>
-              <th>Phone Number</th>
-              <th>City</th>
-              <th>Gender</th>
-              <th>Age</th>
-              <th>Website</th>
-              <th>Rating</th>
+              <th> Customer Name </th>
+              <th> Customer Email </th>
+              <th> Customer IMIE </th>
+              <th> Customer Mobile Number </th>
+              <th>Amount </th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Abhishek</td>
-              <td>Abhi@gmail.com</td>
-              <td>1234567890</td>
-              <td>Delhi</td>
-              <td>Male</td>
-              <td>30</td>
-              <td>Abhi.com</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>Abhishek</td>
-              <td>Abhi@gmail.com</td>
-              <td>1234567890</td>
-              <td>Delhi</td>
-              <td>Male</td>
-              <td>30</td>
-              <td>Abhi.com</td>
-              <td>5</td>
-            </tr>
-            <tr>
-              <td>Abhishek</td>
-              <td>Abhi@gmail.com</td>
-              <td>1234567890</td>
-              <td>Delhi</td>
-              <td>Male</td>
-              <td>30</td>
-              <td>Abhi.com</td>
-              <td>5</td>
-            </tr>
+            {data?.message?.map((i, index) => (
+              <tr key={index}>
+                <td> {i.user?.name} </td>
+                <td> {i.user?.email} </td>
+                <td> {i.user?.IMEI} </td>
+                <td> {i.user?.mobile} </td>
+                <td> {i.amount} </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
-      </div>
       </section>
     </>
   );
 };
-
 export default HOC(CommonUser);

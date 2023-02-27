@@ -8,6 +8,7 @@ import { BiLogInCircle } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Oval } from "react-loader-spinner";
+import axios from "axios";
 
 const Login = () => {
   const [pass, setPass] = useState(false);
@@ -15,16 +16,27 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const login = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
+      const { data } = await axios.post(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/admin/login",
+        {
+          email,
+          password,
+        }
+      );
+      console.log(data);
       navigate("/dashboard");
       toast.success("Welcome");
     } catch (err) {
       setLoading(false);
-      console.log(err)
-      toast.error('Check your credentials')
+      console.log(err);
+      toast.error("Check your credentials");
     }
   };
 
@@ -44,8 +56,9 @@ const Login = () => {
               <input
                 type="email"
                 required
-                placeholder='email'
+                placeholder="email"
                 className="outline-none px-0.5  bg-transparent tracking-wider w-full"
+                onChange={(e) => setEmail(e.target.value)}
               />
               <AiOutlineMail className="text-xl " />
             </div>
@@ -56,6 +69,7 @@ const Login = () => {
                 placeholder="password"
                 name="password"
                 required
+                onChange={(e) => setPassword(e.target.value)}
                 className="outline-none px-0.5  bg-transparent tracking-wider w-full"
               />
 

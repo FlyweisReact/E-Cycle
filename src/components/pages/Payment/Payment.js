@@ -1,107 +1,129 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
 import Table from "react-bootstrap/Table";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { Button, Modal, Form, Container } from "react-bootstrap";
-import img from "../../SVG/list.svg";
-
-const users = [
-  {
-    name: "Wedding/Pre-wedding",
-    PG: "4599.91",
-    VG: "6533.87",
-    DG: "4578.54",
-  },
-  {
-    name: "Maternity/Baby Photoshoot",
-    PG: "4599.91",
-    VG: "6533.87",
-    DG: "4578.54",
-  },
-  {
-    name: "Birthday party (Kids)",
-    PG: "4599.91",
-    VG: "6533.87",
-    DG: "4578.54",
-  },
-  {
-    name: "Birthday party(Adult)",
-    PG: "4599.91",
-    VG: "6533.87",
-    DG: "4578.54",
-  },
-];
-
-function MyVerticallyCenteredModal(props) {
-  return (
-    <Modal
-      {...props}
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Pricing Section
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Container>
-          <Form>
-            <Form.Group>
-              <Form.Label> Name </Form.Label>
-              <Form.Control type="text" />
-            </Form.Group>
-
-            <Form.Group>
-              <Form.Label> Description </Form.Label>
-              <Form.Control type="text" />
-            </Form.Group>
-
-            <Form.Group>
-              <Form.Label>Photo Guy Actual Price </Form.Label>
-              <Form.Control type="number" min={0} />
-            </Form.Group>
-
-            <Form.Group>
-              <Form.Label>Photo Guy Expected Price </Form.Label>
-              <Form.Control type="number" min={0} />
-            </Form.Group>
-
-            <Form.Group>
-              <Form.Label>Video Guy Actual Price </Form.Label>
-              <Form.Control type="number" min={0} />
-            </Form.Group>
-
-            <Form.Group>
-              <Form.Label>Video Guy Expected Price </Form.Label>
-              <Form.Control type="number" min={0} />
-            </Form.Group>
-
-            <Form.Group>
-              <Form.Label>Drone Guy Actual Price</Form.Label>
-              <Form.Control type="number" min={0} />
-            </Form.Group>
-
-            <Form.Group>
-              <Form.Label>Drone Guy Expected Price </Form.Label>
-              <Form.Control type="number" min={0} />
-            </Form.Group>
-            <br />
-            <Button variant="outline-dark">Submit</Button>
-          </Form>
-        </Container>
-      </Modal.Body>
-      <Modal.Footer></Modal.Footer>
-    </Modal>
-  );
-}
+import axios from "axios";
 
 const Payment = () => {
   const [modalShow, setModalShow] = React.useState(false);
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/offer"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  function MyVerticallyCenteredModal(props) {
+    const [url, setUrl] = useState("");
+    const [image, setI] = useState("");
+    const [desc, setDesc] = useState("");
+
+    const postDetails = (e) => {
+      const data = new FormData();
+      data.append("file", image);
+      data.append("upload_preset", "ml_default");
+      data.append("cloud_name", "dbcnha741");
+      fetch("https://api.cloudinary.com/v1_1/dbcnha741/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setUrl(data.url);
+          console.log(data.url);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    const postHandler = async (e) => {
+      e.preventDefault();
+      try {
+        const data = await axios.post(
+          "https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/offer",
+          {
+            image: url,
+            desc,
+          }
+        );
+        console.log(data);
+        toast.success("Added");
+        fetchData();
+        setModalShow(false);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Pricing Section
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Form onSubmit={postHandler}>
+              <Form.Group className="mb-3">
+                <Form.Label> Image </Form.Label>
+                <Form.Control
+                  type="file"
+                  onChange={(e) => setI(e.target.files[0])}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label> Description </Form.Label>
+                <Form.Control
+                  type="text"
+                  onChange={(e) => setDesc(e.target.value)}
+                  onClick={() => postDetails()}
+                />
+              </Form.Group>
+              <Button variant="outline-dark" type="submit">
+                Submit
+              </Button>
+            </Form>
+          </Container>
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+    );
+  }
+
+  const deleteHandler = async (id) => {
+    try {
+      const data = await axios.delete(
+        `https://ledihbp1a7.execute-api.ap-south-1.amazonaws.com/dev/api/v1/offer/${id}`
+      );
+      console.log(data);
+      toast.success("Deleted");
+      fetchData();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <MyVerticallyCenteredModal
@@ -109,29 +131,8 @@ const Payment = () => {
         onHide={() => setModalShow(false)}
       />
 
-<div style={{ display: "flex", gap: "20px", marginBottom: "2%" }}>
-        <img
-          src={img}
-          alt=""
-          style={{
-            backgroundColor: "#4099ff",
-            padding: "8px",
-            borderRadius: "5px",
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-            width: "40px",
-            height: "40px",
-            marginTop: "5px",
-          }}
-        />
-        <p style={{ color: "black", fontSize: "18px", margin: "0" }}>
-          Pricing Section <br />
-          <span style={{ fontSize: "14px" }}>Pricing List</span>
-        </p>
-      </div>
-
-
       <section
-         style={{
+        style={{
           boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
           padding: "20px",
           width: "98%",
@@ -139,8 +140,8 @@ const Payment = () => {
         }}
       >
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
-        <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
-            All Pricing List
+          <span style={{ color: "black", fontSize: "15px", fontWeight: "400" }}>
+            All Offers List
             <hr style={{ width: "70%" }} />
           </span>
           <Button
@@ -153,68 +154,52 @@ const Payment = () => {
             }}
             onClick={() => setModalShow(true)}
           >
-            Add New 
+            Add New
           </Button>
         </div>
-   
 
-      <Table
-        striped
-        bordered
-        hover
-        style={{
-          marginTop: "2%",
-          scrollBehavior: "smooth",
-          overflow: "scroll",
-        }}
-      >
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th> PhotoGuy </th>
-            <th>VideoGuy </th>
-            <th>DroneGuy </th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((i, index) => (
-            <tr key={index}>
-              <td> {i.name} </td>
-              <td>Lorem Ipsum Lorem Ipsunm</td>
-              <td>
-                {" "}
-                ₹{i.PG}
-                <p style={{ textDecoration: "line-through" }}> ₹4521</p>
-              </td>
-              <td>
-                ₹ {i.VG}
-                <p style={{ textDecoration: "line-through" }}> ₹4521</p>{" "}
-              </td>
-              <td>
-                {" "}
-                ₹{i.DG}
-                <p style={{ textDecoration: "line-through" }}> ₹4521</p>{" "}
-              </td>
-              <td>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <AiFillDelete
-                    color="red"
-                    cursor="pointer"
-                    onClick={() => toast.success(" Deleted ")}
-                  />
-                  <AiFillEdit
-                    color="blue"
-                    cursor="pointer"
-                    onClick={() => setModalShow(true)}
-                  />
+        <section
+          className="main-card--container"
+          style={{ color: "black", marginBottom: "10%" }}
+        >
+          {data?.offer?.map((i) => {
+            return (
+              <>
+                <div className="card-container">
+                  <div className="card">
+                    <div className="card-body">
+                      <img
+                        src={i.image}
+                        style={{ width: "100%", height: "200px" }}
+                        alt=""
+                      />
+                      <div
+                        className="card-title"
+                        style={{ textAlign: "center" }}
+                      >
+                        {i.desc}
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Button
+                          variant="outline-danger"
+                          onClick={() => deleteHandler(i._id)}
+                        >
+                          {" "}
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+              </>
+            );
+          })}
+        </section>
       </section>
     </>
   );

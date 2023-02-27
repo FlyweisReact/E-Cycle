@@ -7,14 +7,12 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { Button, Modal, Form, Container } from "react-bootstrap";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const Labour = () => {
   const [modalShow, setModalShow] = React.useState(false);
   const [data, setData] = useState([]);
   const [id, setId] = useState("");
   const [edit, setEdit] = useState(false);
-  const navigate = useNavigate()
 
   const fetchData = async () => {
     try {
@@ -34,7 +32,6 @@ const Labour = () => {
   function MyVerticallyCenteredModal(props) {
     const [location, setLoction] = useState("");
     const [cycleNumber, setCycleNumber] = useState("");
-
 
     const postHandler = async (e) => {
       e.preventDefault();
@@ -177,7 +174,7 @@ const Labour = () => {
             <tr key={index}>
               <td> {i.cycleNumber} </td>
               <td> {i.stations} </td>
-              <td> {i.imei} </td>
+              <td> {i.stations} </td>
               <td>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <AiFillDelete
@@ -194,12 +191,6 @@ const Labour = () => {
                       setModalShow(true);
                     }}
                   />
-                    <i
-                        class="fa-solid fa-eye"
-                        onClick={() =>
-                          navigate(`/bike/${i._id}/location/${i.bikesIMEI}`)
-                        }
-                      ></i>
                 </div>
               </td>
             </tr>

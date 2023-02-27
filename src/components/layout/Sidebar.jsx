@@ -4,11 +4,10 @@ import React from "react";
 import { RiCloseLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { BiLogOutCircle } from "react-icons/bi";
-import { AiOutlineUser, AiFillNotification } from "react-icons/ai";
-import { BsFillImageFill, BsGraphUp } from "react-icons/bs";
+import { AiOutlineUser } from "react-icons/ai";
+import { BsFillImageFill } from "react-icons/bs";
 import { MdDashboardCustomize, MdPrivacyTip } from "react-icons/md";
 import { IoIosPricetags } from "react-icons/io";
-
 import { toast } from "react-toastify";
 import { FiHelpCircle } from "react-icons/fi";
 import { FaCity } from "react-icons/fa";
@@ -30,52 +29,47 @@ const Sidebar = ({ hamb, setHamb }) => {
     {
       icon: <FaCity className="text-xl mr-3" />,
       link: "/city",
-      name: "City",
-    },
-    {
-      icon: <BsGraphUp className="text-xl mr-3" />,
-      link: "/graph",
-      name: "Analatical Graph",
-    },
-    {
-      icon: <AiFillNotification className="text-xl mr-3" />,
-      link: "/notification",
-      name: "Notification",
+      name: "Pack",
     },
     {
       icon: <AiOutlineUser className="text-xl mr-3" />,
       link: "/generateId",
-      name: "Hero",
-    },
-    {
-      icon: <AiOutlineUser className="text-xl mr-3" />,
-      link: "/common",
-      name: "Common Users",
-    },
-    {
-      icon: <AiOutlineUser className="text-xl mr-3" />,
-      link: "/Notice/Labour",
-      name: "Bookings",
+      name: "Ride Charges",
     },
     {
       icon: <AiOutlineUser className="text-xl mr-3" />,
       link: "/Notice/Customer",
-      name: "Coupons",
+      name: "Zone's",
+    },
+    {
+      icon: <AiOutlineUser className="text-xl mr-3" />,
+      link: "/trans",
+      name: "Transaction's",
+    },
+    {
+      icon: <AiOutlineUser className="text-xl mr-3" />,
+      link: "/labour",
+      name: "E-Cycle's",
+    },
+    {
+      icon: <AiOutlineUser className="text-xl mr-3" />,
+      link: "/Notice/Labour",
+      name: "Membership's",
+    },
+    {
+      icon: <AiOutlineUser className="text-xl mr-3" />,
+      link: "/notification",
+      name: "Push Notification's",
     },
     {
       icon: <IoIosPricetags className="text-xl mr-3" />,
       link: "/pay",
-      name: "Pricing Section",
+      name: "Offers",
     },
     {
       icon: <IoIosPricetags className="text-xl mr-3" />,
-      link: "/trans",
-      name: "Transactional",
-    },
-    {
-      icon: <BsFillImageFill className="text-xl mr-3" />,
-      link: "/cat",
-      name: "Banners",
+      link: "/common",
+      name: "Security Deposit",
     },
     {
       icon: <BsFillImageFill className="text-xl mr-3" />,
@@ -102,16 +96,14 @@ const Sidebar = ({ hamb, setHamb }) => {
 
   return (
     <>
-      <aside
+      <div
         className="p-4"
         style={{
           backgroundColor: "#263544",
-          boxShadow:
-            " ",
-            minWidth : '300px'
+            minHeight : '100vh'
         }}
       >
-        <div className="w-full md:hidden relative  p-2 mb-4">
+        <div className="w-full md:hidden relative  mb-4">
           <RiCloseLine
             onClick={() => setHamb(!hamb)}
             className="text-3xl  absolute top-2 sm:hover:rotate-[228deg] transition-transform font-bold right-2 sm:hover:text-[22px] text-[rgb(241,146,46)] cursor-pointer"
@@ -147,7 +139,7 @@ const Sidebar = ({ hamb, setHamb }) => {
             <BiLogOutCircle className="text-xl mr-3" /> Logout
           </span>
         </nav>
-      </aside>
+      </div>
     </>
   );
 };

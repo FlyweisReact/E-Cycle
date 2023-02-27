@@ -20,6 +20,8 @@ import City from "./components/pages/City/City";
 import Graph from "./components/pages/City/Graph";
 import PushNotification from "./components/pages/Notification/PushNotification";
 import CommonUser from "./components/pages/CommonUser";
+import Servie from "./components/pages/Payment/Servie";
+import BikeLoction from "./components/pages/City/BikeLoction";
 
 function App() {
   return (
@@ -29,20 +31,25 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/customer" element={<Customers />} />
-        <Route path="/cat" element={<Cat />} />
+        <Route path="/city" element={<City />} />
+        <Route path="/generateId" element={<GenerateId />} />
+        <Route path="/Notice/Customer" element={<NotifyCustomer />} />
+        <Route path="/pay" element={<Payment />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/help" element={<Help />} />
         <Route path="/labour" element={<Labour />} />
-        <Route path="/pay" element={<Payment />} />
-        <Route path="/generateId" element={<GenerateId />} />
         <Route path="/Notice/Labour" element={<NotifyLabour />} />
-        <Route path="/Notice/Customer" element={<NotifyCustomer />} />
-        <Route path="/trans" element={<Transaction />} />
-        <Route path="/city" element={<City />} />
-        <Route path="/graph" element={<Graph />} />
         <Route path="/notification" element={<PushNotification />} />
+        <Route path="/trans" element={<Transaction />} />
         <Route path="/common" element={<CommonUser />} />
+
+
+
+        <Route path="/cat" element={<Cat />} />
+        <Route path="/graph/:id" element={<Graph />} />
+        <Route path="/service" element={<Servie />} />
+        <Route path="/bike/:id/location/:imie" element={<BikeLoction />} />
 
       </Routes>
     </>
